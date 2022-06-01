@@ -13,7 +13,7 @@ function ProductDetailPage(props) {
     </Fragment>
   );
 }
-
+// Use this for dummybackend for countlist project
 async function getData() {
   const filePath = path.join(process.cwd(), "data", "dummy-backend.json");
   const jsonData = await fs.readFile(filePath);

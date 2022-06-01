@@ -1,7 +1,9 @@
 import { useEffect, useState } from "react";
 import useSWR from "swr";
 function LastSalesPage(props) {
-  const [sales, setSales] = useState();
+  const [sales, setSales] = useState(props.sales);
+  // This hook fetches data from the database.
+
   const { data, error } = useSWR(
     "https://nextjs-course-c5de2-default-rtdb.europe-west1.firebasedatabase.app/sales.json",
     (url) => fetch(url).then((res) => res.json())
@@ -44,9 +46,9 @@ function LastSalesPage(props) {
   //   }, []);
   // need to check for sales else we will get undefined when calling map on sales in the fetch function
   if (error) {
-    return <p>Failed to load..</p>;
+    return <p>Failed to load...</p>;
   }
-  if (!data || !sales) {
+  if (!data && !sales) {
     return <p>Loading...</p>;
   }
 
@@ -59,6 +61,25 @@ function LastSalesPage(props) {
       ))}
     </ul>
   );
+}
+
+export async function getStaticProps() {
+  return fetch(
+    "https://nextjs-course-c5de2-default-rtdb.europe-west1.firebasedatabase.app/sales.json"
+  )
+    .then((response) => response.json())
+    .then((data) => {
+      const transformedSales = [];
+
+      for (const key in data) {
+        transformedSales.push({
+          id: key,
+          username: data[key].username,
+          volume: data[key].volume,
+        });
+      }
+      return { props: { sales: transformedSales } };
+    });
 }
 
 export default LastSalesPage;
